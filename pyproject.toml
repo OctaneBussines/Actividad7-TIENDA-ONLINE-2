@@ -1,3 +1,13 @@
+[project]
+name = "tienda-online"
+version = "1.0.0"
+description = "Aplicación de tienda en línea con Flask"
+requires-python = ">=3.8"
+dependencies = [
+    "Flask>=2.3.0",
+    "reportlab>=4.0.0",
+]
+
 [tool.vercel]
 framework = "flask"
 entrypoint = "run.py"
