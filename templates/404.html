@@ -1,0 +1,9 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<section class="panel notfound-panel">
+    <h1>Página no encontrada</h1>
+    <p>La ruta solicitada no existe. Regresa al panel principal.</p>
+    <a class="button primary" href="{{ url_for('dashboard') }}">Ir al panel</a>
+</section>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<section class="panel form-panel">
+    <h1>{{ action }} producto</h1>
+    <form method="post" class="product-form">
+        <label for="name">Nombre del producto</label>
+        <input id="name" name="name" type="text" value="{{ product.name if product else '' }}" required>
+
+        <label for="category">Categoría</label>
+        <input id="category" name="category" type="text" value="{{ product.category if product else '' }}" required>
+
+        <label for="cost">Costo unitario</label>
+        <input id="cost" name="cost" type="number" step="0.01" value="{{ product.cost if product else '' }}" required>
+        <p id="computed-price" class="form-info">Precio de venta +20%: ${{ '%.2f'|format(product.price) if product else '0.00' }}</p>
+
+        <label for="stock">Stock</label>
+        <input id="stock" name="stock" type="number" value="{{ product.stock if product else '' }}" required>
+
+        <label for="description">Descripción</label>
+        <textarea id="description" name="description" rows="4">{{ product.description if product else '' }}</textarea>
+
+        <button type="submit" class="button primary">{{ action }}</button>
+        <a class="button secondary" href="{{ url_for('dashboard') }}">Cancelar</a>
+    </form>
+</section>
+
+<script>
+const costInput = document.getElementById('cost');
+const computedPrice = document.getElementById('computed-price');
+
+function updateComputedPrice() {
+    const cost = parseFloat(costInput.value) || 0;
+    computedPrice.textContent = `Precio de venta +20%: $${(cost * 1.2).toFixed(2)}`;
+}
+
+costInput.addEventListener('input', updateComputedPrice);
+updateComputedPrice();
+</script>
+{% endblock %}

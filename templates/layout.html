@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tienda Gaming Neón</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header class="topbar">
+        <div class="brand">
+            <a href="{{ url_for('dashboard') }}">Tienda Gaming</a>
+        </div>
+        {% if session.get('user') %}
+        <nav class="nav-links">
+            <a href="{{ url_for('dashboard') }}">Productos</a>
+            <a href="{{ url_for('cart') }}">Carrito</a>
+            {% if session.get('is_admin') %}
+            <a href="{{ url_for('create_product') }}">Agregar producto</a>
+            {% endif %}
+            <a href="{{ url_for('logout') }}">Cerrar sesión</a>
+        </nav>
+        {% endif %}
+    </header>
+
+    <main class="page-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <section class="alerts">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+                </section>
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>Proyecto profesional Python / Flask con MVC, carrito y factura PDF.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,90 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<section class="panel cart-detail-panel">
+    <h1>Carrito de compra</h1>
+    {% if cart_items %}
+    <table class="cart-table">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Categoría</th>
+                <th>Cantidad</th>
+                <th>Costo unitario</th>
+                <th>Precio</th>
+                <th>Ganancia %</th>
+                <th>Subtotal</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart_items %}
+            <tr>
+                <td data-label="Producto">{{ item.name }}</td>
+                <td data-label="Categoría">{{ item.category }}</td>
+                <td data-label="Cantidad">{{ item.quantity }}</td>
+                <td data-label="Costo unitario">${{ '%.2f'|format(item.cost) }}</td>
+                <td data-label="Precio">${{ '%.2f'|format(item.price) }}</td>
+                <td data-label="Ganancia %">{{ '%.2f'|format(item.profit_pct) }}%</td>
+                <td data-label="Subtotal">${{ '%.2f'|format(item.total) }}</td>
+                <td data-label="Acción">
+                    <form method="post" action="{{ url_for('remove_from_cart', product_id=item.id) }}">
+                        <button type="submit" class="button danger">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="cart-summary">
+        <p>Total de la compra: <strong>${{ '%.2f'|format(cart_total) }}</strong></p>
+        <p>Costo total: <strong>${{ '%.2f'|format(cart_cost_total) }}</strong></p>
+        <p>Ganancia total: <strong>${{ '%.2f'|format(cart_profit_total) }}</strong></p>
+        <div class="cart-actions">
+            {% if payment_simulated %}
+            <div class="success-box">
+                <p>Pago QR simulado. Escanea el código para completar el pago y luego descarga tu factura.</p>
+            </div>
+            <div class="qr-card">
+                <div class="qr-badge">QR de pago</div>
+                <svg class="qr-image" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Código QR de pago">
+                    <rect x="0" y="0" width="120" height="120" fill="#ffffff"/>
+                    <rect x="10" y="10" width="30" height="30" fill="#0f172a"/>
+                    <rect x="20" y="20" width="10" height="10" fill="#ffffff"/>
+                    <rect x="80" y="10" width="30" height="30" fill="#0f172a"/>
+                    <rect x="90" y="20" width="10" height="10" fill="#ffffff"/>
+                    <rect x="10" y="80" width="30" height="30" fill="#0f172a"/>
+                    <rect x="20" y="90" width="10" height="10" fill="#ffffff"/>
+                    <rect x="45" y="45" width="10" height="10" fill="#0f172a"/>
+                    <rect x="65" y="45" width="10" height="10" fill="#0f172a"/>
+                    <rect x="45" y="65" width="10" height="10" fill="#0f172a"/>
+                    <rect x="65" y="65" width="10" height="10" fill="#0f172a"/>
+                    <rect x="30" y="10" width="10" height="10" fill="#0f172a"/>
+                    <rect x="10" y="30" width="10" height="10" fill="#0f172a"/>
+                    <rect x="90" y="80" width="20" height="20" fill="#0f172a"/>
+                    <rect x="50" y="90" width="20" height="20" fill="#0f172a"/>
+                    <rect x="80" y="50" width="10" height="10" fill="#0f172a"/>
+                    <rect x="30" y="50" width="10" height="10" fill="#0f172a"/>
+                    <rect x="50" y="30" width="10" height="10" fill="#0f172a"/>
+                </svg>
+            </div>
+            <a class="button primary" href="{{ url_for('checkout') }}">Descargar factura</a>
+            {% else %}
+            <p class="info-line">Seleccione el pago QR para activar la descarga de factura.</p>
+            <form method="post" action="{{ url_for('simulate_payment') }}">
+                <button type="submit" class="button primary qr-button">
+                    <span class="qr-icon">&#x1F4F2;</span>
+                    Simular pago QR
+                </button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p>No hay productos en el carrito todavía.</p>
+        <a class="button secondary" href="{{ url_for('dashboard') }}">Ver productos</a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

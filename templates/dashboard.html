@@ -1,0 +1,78 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<section class="dashboard-grid">
+    <aside class="panel categories-panel">
+        <h2>Categorías</h2>
+        <ul>
+            <li><a href="{{ url_for('dashboard') }}" class="category-link {% if not selected_category %}active{% endif %}">Todas</a></li>
+            {% for category in categories %}
+            <li>
+                <a href="{{ url_for('dashboard', category=category) }}" class="category-link {% if selected_category == category %}active{% endif %}">{{ category }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </aside>
+
+    <section class="panel product-panel">
+        <div class="panel-header">
+            <div>
+                <h1>Productos</h1>
+                {% if selected_category %}<p>Filtrando por <strong>{{ selected_category }}</strong></p>{% endif %}
+            </div>
+            {% if session.get('is_admin') %}
+            <a class="button primary" href="{{ url_for('create_product') }}">Agregar producto</a>
+            {% endif %}
+        </div>
+
+        <div class="product-grid">
+            {% for product in products %}
+            <article class="product-card">
+                <div class="product-header">
+                    <span class="badge">{{ product.category }}</span>
+                    <span class="price">${{ '%.2f'|format(product.price) }}</span>
+                </div>
+                <h3>{{ product.name }}</h3>
+                <p>{{ product.description }}</p>
+                <p class="cost">Costo unitario: ${{ '%.2f'|format(product.cost) }}</p>
+                <p class="stock">Stock: {{ product.stock }}</p>
+                <div class="product-actions">
+                    <a class="button secondary" href="{{ url_for('add_to_cart', product_id=product.id, category=selected_category) }}">Añadir al carrito</a>
+                    {% if session.get('is_admin') %}
+                    <a class="button tertiary" href="{{ url_for('edit_product', product_id=product.id) }}">Editar</a>
+                    <form method="post" action="{{ url_for('delete_product', product_id=product.id) }}" class="inline-form">
+                        <button type="submit" class="button danger">Eliminar</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </article>
+            {% endfor %}
+            {% if not products %}
+            <div class="empty-state">
+                <p>No hay productos en esta categoría.</p>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <aside class="panel cart-panel">
+        <h2>Carrito</h2>
+        {% if cart_items %}
+        <ul class="cart-list">
+            {% for item in cart_items %}
+            <li>
+                <strong>{{ item.name }}</strong>
+                <span>{{ item.quantity }} x ${{ '%.2f'|format(item.price) }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        <div class="cart-footer">
+            <p>Total: <strong>${{ '%.2f'|format(cart_total) }}</strong></p>
+            <a class="button primary" href="{{ url_for('cart') }}">Ver carrito</a>
+        </div>
+        {% else %}
+        <p>Tu carrito está vacío.</p>
+        {% endif %}
+    </aside>
+</section>
+{% endblock %}
